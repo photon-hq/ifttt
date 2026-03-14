@@ -1,0 +1,13 @@
+services:
+  ifttt:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - IFTTT_SERVICE_KEY=${IFTTT_SERVICE_KEY}
+      - PUBLIC_URL=${PUBLIC_URL}
+      - PORT=3000
+      - HOST=0.0.0.0
+    env_file:
+      - .env
