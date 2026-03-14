@@ -1,4 +1,5 @@
 import type { Context, Next } from "hono";
+import { decodeCredentials } from "../sdk.js";
 
 export function getBearer(c: Context): string | undefined {
 	const h = c.req.header("Authorization") ?? "";
@@ -20,12 +21,20 @@ export function requireServiceKey(serviceKey: string) {
 export function requireAuth(serviceKey: string) {
 	return async (c: Context, next: Next) => {
 		const hasServiceKey = c.req.header("IFTTT-Service-Key") === serviceKey;
-		const hasBearer = (c.req.header("Authorization") ?? "").startsWith(
-			"Bearer ",
-		);
-		if (!hasServiceKey && !hasBearer) {
-			return c.json({ errors: [{ message: "Unauthorized" }] }, 401);
+		const bearer = getBearer(c);
+
+		if (bearer) {
+			const creds = decodeCredentials(bearer);
+			if (!creds) {
+				return c.json({ errors: [{ message: "Invalid access token" }] }, 401);
+			}
+			return next();
 		}
-		return next();
+
+		if (hasServiceKey) {
+			return next();
+		}
+
+		return c.json({ errors: [{ message: "Unauthorized" }] }, 401);
 	};
 }
