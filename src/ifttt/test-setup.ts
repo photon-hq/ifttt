@@ -32,7 +32,9 @@ export function createTestSetupRoute(serviceKey: string) {
 						new_message: {},
 						message_sent: {},
 						message_failed: {},
-						group_event: {},
+						group_event: {
+							event_type: "group.name_changed",
+						},
 					},
 					actions: {
 						send_message: {
