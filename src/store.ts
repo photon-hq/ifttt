@@ -67,6 +67,7 @@ class EventStore {
 	}
 
 	seedTestData(token: string) {
+		this.events = [];
 		this.setUser(token, { id: "test-user-1", name: "Test User" });
 		this.registerSigningSecret("test_signing_secret");
 		const now = Math.floor(Date.now() / 1000);
@@ -77,14 +78,17 @@ class EventStore {
 			"message_failed",
 			"group_event",
 		];
-		for (let i = 0; i < 3; i++) {
-			for (const trigger of triggers) {
-				this.events.unshift({
+
+		for (const trigger of triggers) {
+			const items: TriggerItem[] = [];
+			for (let i = 0; i < 3; i++) {
+				const ts = now - i * 60;
+				items.push({
 					_trigger: trigger,
 					event_type:
 						trigger === "group_event" ? "group.name_changed" : trigger,
 					chat_guid: `iMessage;-;+91852743857${i}`,
-					sender: i % 2 === 0 ? `+918527438574` : `+919968476781`,
+					sender: i % 2 === 0 ? "+918527438574" : "+919968476781",
 					text: `Test ${trigger} #${i + 1}`,
 					attachments: "",
 					message_guid: randomUUID(),
@@ -92,10 +96,11 @@ class EventStore {
 					group_name: trigger === "group_event" ? "Test Group" : "",
 					error_code: trigger === "message_failed" ? "500" : "",
 					error_message: trigger === "message_failed" ? "Delivery failed" : "",
-					created_at: new Date((now - i * 60) * 1000).toISOString(),
-					meta: { id: randomUUID(), timestamp: now - i * 60 },
+					created_at: new Date(ts * 1000).toISOString(),
+					meta: { id: randomUUID(), timestamp: ts },
 				});
 			}
+			this.events.push(...items);
 		}
 	}
 }

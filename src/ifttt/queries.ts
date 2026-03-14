@@ -21,16 +21,19 @@ export function createQueriesRoute(serviceKey: string) {
 			const offset = cursor ? Number.parseInt(cursor, 10) : 0;
 
 			if (isTestRequest(c)) {
+				const now = Math.floor(Date.now() / 1000);
 				const data = [];
 				const count = Math.min(limit, 3);
 				for (let i = 0; i < count; i++) {
 					data.push({
 						message_guid: `test-msg-${offset + i}`,
-						chat_guid: "iMessage;-;+15550001234",
-						sender: "+15550001234",
+						chat_guid: "iMessage;-;+918527438574",
+						sender: i % 2 === 0 ? "+918527438574" : "+919968476781",
 						text: `Test message ${offset + i + 1}`,
 						is_from_me: "false",
-						date: new Date().toISOString(),
+						created_at: new Date(
+							(now - (offset + i) * 60) * 1000,
+						).toISOString(),
 					});
 				}
 				const result: any = { data };
@@ -56,7 +59,7 @@ export function createQueriesRoute(serviceKey: string) {
 					sender: msg.handle?.address ?? msg.sender ?? "",
 					text: msg.text ?? "",
 					is_from_me: String(msg.isFromMe ?? false),
-					date: msg.date ?? new Date().toISOString(),
+					created_at: msg.date ?? new Date().toISOString(),
 				}));
 
 				const result: any = { data };
