@@ -36,6 +36,17 @@ function triggerRoute(
 		const fields = body?.triggerFields ?? {};
 		const filterValue = filterField ? fields?.[filterField] : undefined;
 
+		if (filterField && !filterValue) {
+			return c.json(
+				{
+					errors: [
+						{ message: `Missing required trigger field: ${filterField}` },
+					],
+				},
+				400,
+			);
+		}
+
 		const items = store
 			.query(
 				slug,
