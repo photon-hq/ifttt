@@ -83,8 +83,8 @@ class EventStore {
 					_trigger: trigger,
 					event_type:
 						trigger === "group_event" ? "group.name_changed" : trigger,
-					chat_guid: `iMessage;-;+1555000000${i}`,
-					sender: `+1555000000${i}`,
+					chat_guid: `iMessage;-;+91852743857${i}`,
+					sender: i % 2 === 0 ? `+918527438574` : `+919968476781`,
 					text: `Test ${trigger} #${i + 1}`,
 					attachments: "",
 					message_guid: randomUUID(),
