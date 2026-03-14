@@ -38,11 +38,11 @@ export function createTestSetupRoute(serviceKey: string) {
 					},
 					actions: {
 						send_message: {
-							to: "+15550001234",
+							to: "+918527438574",
 							text: "Hello from IFTTT test!",
 						},
 						send_reaction: {
-							chat_guid: "iMessage;-;+15550001234",
+							chat_guid: "iMessage;-;+918527438574",
 							message_guid: "test-msg-guid",
 							reaction: "love",
 						},
