@@ -82,8 +82,9 @@ bun run dev
 
 | URL | Value |
 |-----|-------|
-| Authorization URL | `https://your-domain/oauth/authorize` |
-| Token URL | `https://your-domain/oauth/token` |
+| API URL Prefix | `https://ifttt.photon.codes` |
+| Authorization URL | `https://ifttt.photon.codes/oauth/authorize` |
+| Token URL | `https://ifttt.photon.codes/oauth/token` |
 
 ## Endpoints
 
@@ -116,7 +117,7 @@ docker network create dokploy-network  # if not exists
 docker-compose up --build
 ```
 
-Or deploy directly on Dokploy pointing to this repo.
+Or deploy directly on Dokploy pointing to this repo with domain `ifttt.photon.codes`.
 
 ## Files
 

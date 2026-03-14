@@ -6,7 +6,7 @@ services:
       - "${PORT:-3000}:3000"
     environment:
       - IFTTT_SERVICE_KEY=${IFTTT_SERVICE_KEY}
-      - PUBLIC_URL=${PUBLIC_URL}
+      - PUBLIC_URL=${PUBLIC_URL:-https://ifttt.photon.codes}
       - PORT=3000
       - HOST=0.0.0.0
     env_file:
