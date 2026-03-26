@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { Hono } from "hono";
+import type { IMClient } from "../sdk.js";
 import { createSDK, decodeCredentials } from "../sdk.js";
 import { store } from "../store.js";
 import { getBearer, requireAuth } from "./middleware.js";
@@ -8,6 +9,18 @@ import { isTestRequest } from "./test-setup.js";
 function normalizeChatGuid(to: string): string {
 	if (to.includes(";")) return to;
 	return `iMessage;-;${to}`;
+}
+
+async function hasInboundMessage(
+	sdk: IMClient,
+	chatGuid: string,
+): Promise<boolean> {
+	try {
+		const msgs = await sdk.chats.getChatMessages(chatGuid, { limit: 100 });
+		return (Array.isArray(msgs) ? msgs : []).some((m) => !m.isFromMe);
+	} catch {
+		return false;
+	}
 }
 
 export function createActionsRoute(serviceKey: string) {
@@ -45,9 +58,25 @@ export function createActionsRoute(serviceKey: string) {
 			if (creds.signingSecret) store.registerSigningSecret(creds.signingSecret);
 
 			const sdk = createSDK(creds);
+			const chatGuid = normalizeChatGuid(to);
+
+			if (!(await hasInboundMessage(sdk, chatGuid))) {
+				return c.json(
+					{
+						errors: [
+							{
+								message:
+									"No prior inbound message from this contact. Outbound messages are only allowed to contacts who have messaged you first.",
+							},
+						],
+					},
+					400,
+				);
+			}
+
 			try {
 				const result = await sdk.messages.sendMessage({
-					chatGuid: normalizeChatGuid(to),
+					chatGuid,
 					message: text,
 				});
 				return c.json({
